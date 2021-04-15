@@ -1,0 +1,97 @@
+<div class='instructions'>
+    <h1>Demographics Questionnaire</h1>
+    <div class='form'>
+        <label for='age'>Age: </label>
+        <input type='number' id='age' name='age' min='18' max='100' required>
+    </div>
+    <div class='form'>
+        <label for='gender'>Gender: </label>
+        <select id='gender' name='gender_drop' required>
+            <option disabled selected value> -- select an option -- </option>
+            <option>Prefer not to say</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Non-binary</option>
+        </select>
+    </div>
+    <div class='form'>
+        <label for='education'>What is the highest level of education completed? </label>
+        <select id='education' name='education_drop' required>
+            <option disabled selected value> -- select an option -- </option>
+            <option>Prefer not to say</option>
+            <option>Secondary or High School</option>
+            <option>Vocational Qualification</option>
+            <option>Bachelor's Degree</option>
+            <option>Master's or Higher</option>
+        </select>
+    </div>
+    <div class='form'>
+        <label for='speech'>How often do you use speech interface systems like Alexa, Siri, or Google Assistant? </label>
+        <select id='speech' name='speech_drop' required>
+            <option disabled selected value> -- select an option -- </option>
+            <option>Daily</option>
+            <option>A few times per week</option>
+            <option>A few times per month</option>
+            <option>Rarely</option>
+            <option>Never</option>
+            <options>Used a lot at first but now it's rarely used</option>
+        </select>
+    </div>
+    <div class='form optionals hidden'>
+        <label for='assistant'>Which of the following do you use most often: </label>
+        <select id='assistant' name='assistant_drop'>
+            <option disabled selected value> -- select an option -- </option>
+            <option>Amazon Alexa</option>
+            <option>Apple's Siri</option>
+            <option>Google Assistant</option>
+            <option>Cortana</option>
+            <option>Other</option>
+        </select>
+    </div>
+    <div class='form hidden' id='ass_holder'>
+        <label for='other_ass'>Other assistant used: </label>
+        <input type='text' id='other_ass' name='other_assistant' autocomplete="off">
+    </div>
+    <div class='form optionals hidden'>
+        <label for='device'>Which device do you use most frequently to access these systems? </label>
+        <select id='device' name='device_drop'>
+            <option disabled selected value> -- select an option -- </option>
+            <option>Smartphone</option>
+            <option>Smart speaker</option>
+            <option>In car</option>
+            <option>Other</option>
+        </select>
+    </div>
+    <div class='form hidden' id='dev_holder'>
+        <label for='other_dev'>Other device used: </label>
+        <input type='text' id='other_dev' name='other_device' autocomplete="off">
+    </div>
+    <div class='form'>
+        <label for='native'>Are you a native (or near native) English speaker? </label>
+        <select id='native' name='native_speaker' required>
+            <option>Yes</option>
+            <option selected>No</option>
+        </select>
+    </div>
+    <div class='form'>
+        <label for='vision'>Do you have normal to corrected vision? </label>
+        <select id='vision' name='normal_vision' required>
+            <option>Yes</option>
+            <option selected>No</option>
+        </select>
+    </div>
+    <div class='form'>
+        <label for='hearing'>Do you have normal to corrected hearing? </label>
+        <select id='hearing' name='normal_hearing' required>
+            <option>Yes</option>
+            <option selected>No</option>
+        </select>
+    </div>
+    <div class='form'>
+        <label for='impairment'>Do you suffer from a diagnosed speech or cognitive impairment? </label>
+        <select id='impairment' name='impairment_condition' required>
+            <option>Yes</option>
+            <option selected>No</option>
+        </select>
+    </div>
+</div>

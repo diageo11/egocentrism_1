@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+<script>
+    var timeline = [];
+    var fills = [];
+    var tests = [];
+    var images = [];
+    var setA = [];
+    var setB = [];
+    var setC = [];
+    var setD = [];
+    var setE = [];
+    var setF = [];
+    var audioSets = [];
+    var sets= [setA,setB,setC,setD,setE,setF];
+    var thisSetnum = Math.floor((Math.random() * 6));
+    var thisSet = sets[thisSetnum];
+    var counter = 0;
+    var mediaRecorder;
+    var turkInfo = jsPsych.turk.turkInfo();
+    var ID = String(turkInfo.workerId + "1");
+    var audioBlob;
+    var blobUrl;
+    
+    
+    
+var demo = `<div id = "demo">
+<h1>Demographic Questionnaire </h1>
+<h3>Have you previously taken part in a similar experiment?</h3>
+    <input name="similar" type="radio" value="Yes"  /> Yes <br>
+     <input name="similar" type="radio" value="No" /> No
+<h3>Age</h3>
+    <input name="age" type="number" />
+<h3>Sex</h3>
+    <input name="sex" type="radio" value="Male"  /> Male <br>
+    <input name="sex" type="radio" value="Female" /> Female <br>
+    <input name="sex" type="radio" value="Prefer not to say" /> Prefer not to say <br>
+    <input name="sex" type="radio" value="Not listed" /> Not listed   <input type="text"> 
+    
+<h3>Nationality</h3>
+    <input name="nationality" type="text" />
+<h3>Profession</h3>
+    <input name="profession" type="text" />
+<h3>Subject Area</h3>
+    <input name="subjject" type="text" />
+<h3>How would you describe your level of spoken English?</h3>
+    <input name="native" type="radio" value="Native" />Native <br>
+    <input name="native" type="radio" value="Near native" />Near native <br>
+    <input name="native" type="radio" value="Non-native" />Non-native 
+<h3>On average, how long do you spend on a computer each day?</h3>
+    <input name="howlong" type="radio" value="0-1" />One hour or less per day<br>
+    <input name="howlong" type="radio" value="1-2" />1-2 hours per day<br>
+    <input name="howlong" type="radio" value="2-4" />2-4 hours per day <br>
+    <input name="howlong" type="radio" value="4+" />More than 4 hours per day
+<h3>How would you describe your computer experience? </h3>
+    <input name="experience" type="radio" value="No Experience" />No Experience<br>
+    <input name="experience" type="radio" value="Beginner" />Beginner<br>
+    <input name="experience" type="radio" value="Intermediate" />Intermediate<br>
+    <input name="experience" type="radio" value="Advanced" />Advanced <br>
+    <input name="experience" type="radio" value="Expert" />Expert
+<h3>How would you describe your computer programming experience? </h3>
+    <input name="progexperience" type="radio" value="No Experience" />No Experience<br>
+    <input name="progexperience" type="radio" value="Beginner" />Beginner<br>
+    <input name="progexperience" type="radio" value="Intermediate" />Intermediate<br>
+    <input name="progexperience" type="radio" value="Advanced" />Advanced <br>
+    <input name="progexperience" type="radio" value="Expert" />Expert
+<h3>Have you previously used services where you speak to a computer or
+automated system (e.g. telephone banking services, automated ticket booking
+lines, Siri, Google Now etc)? </h3>
+    <input name="siri" type="radio" value="Yes" />Yes<br>
+    <input name="siri" type="radio" value="No" />No<br>
+    <input name="siri" type="radio" value="Not Sure" />Not Sure<br>
+<h3>How frequently do you use services where you speak to a computer or
+    automated system?</h3>
+    Very Infrequently 
+    <input name="sirifreq" type="radio" value="1" />
+    <input name="sirifreq" type="radio" value="2" />
+    <input name="sirifreq" type="radio" value="3" />
+    <input name="sirifreq" type="radio" value="4" />
+    <input name="sirifreq" type="radio" value="5" />
+    <input name="sirifreq" type="radio" value="6" />
+    <input name="sirifreq" type="radio" value="7" />
+    Very Frequently
+<h3>I thought the partner I played the game with today was:</h3>
+    <input name="partnerID" type="radio" value="Human" /> A person <br>
+    <input name="partnerID" type="radio" value="Computer" /> A computer
+    
+</div>`
+
+var mictest = `<body>
+    <H1>Microphone Testing</H1>
+    <p>To take part in this experiment you will require a working microphone. Please test your voice using the record button to make sure that your microphone works.</p>
+    <button onclick='record()' id='record'>Record</button>
+    <button onclick='stop()' id='stop' disabled>Stop</button>
+    <h2>Information Logs</h2>
+    <div id='logs'></div>
+    <h2>Recordings</h2>
+    <div id='recordings'></div>
+
+    <div>
+        <p>Please make sure to listen to a few recordings before you press continue. Make sure that you can clearly hear your voice at a regular volume.</p> <button onclick='startExperiment()' id='start' disabled>Continue</button>
+    </div>
+`
+
+    var Asr = ["img/setA/(1)sr.png",
+"img/setA/(2)sr.png",
+"img/setA/(3)sr.png",
+"img/setA/(4)sr.png",
+"img/setA/(5)sr.png",
+"img/setA/(6)sr.png",
+"img/setA/(7)sr.png",
+"img/setA/(8)sr.png",
+"img/setA/(9)sr.png",
+"img/setA/(10)sr.png",
+"img/setA/(11)sr.png",
+"img/setA/(12)sr.png",
+"img/setA/(13)sr.png"];
+    setA.push(Asr);
+    var Bsr = ["img/setB/(1)sr.png",
+"img/setB/(2)sr.png",
+"img/setB/(3)sr.png",
+"img/setB/(4)sr.png",
+"img/setB/(5)sr.png",
+"img/setB/(6)sr.png",
+"img/setB/(7)sr.png",
+"img/setB/(8)sr.png",
+"img/setB/(9)sr.png",
+"img/setB/(10)sr.png",
+"img/setB/(11)sr.png",
+"img/setB/(12)sr.png",
+"img/setB/(13)sr.png"];
+    setB.push(Bsr);
+    var Csr = ["img/setC/(1)sr.png",
+"img/setC/(2)sr.png",
+"img/setC/(3)sr.png",
+"img/setC/(4)sr.png",
+"img/setC/(5)sr.png",
+"img/setC/(6)sr.png",
+"img/setC/(7)sr.png",
+"img/setC/(8)sr.png",
+"img/setC/(9)sr.png",
+"img/setC/(10)sr.png",
+"img/setC/(11)sr.png",
+"img/setC/(12)sr.png",
+"img/setC/(13)sr.png"];
+    setC.push(Csr);
+    var Dsr = ["img/setD/(1)sr.png",
+"img/setD/(2)sr.png",
+"img/setD/(3)sr.png",
+"img/setD/(4)sr.png",
+"img/setD/(5)sr.png",
+"img/setD/(6)sr.png",
+"img/setD/(7)sr.png",
+"img/setD/(8)sr.png",
+"img/setD/(9)sr.png",
+"img/setD/(10)sr.png",
+"img/setD/(11)sr.png",
+"img/setD/(12)sr.png",
+"img/setD/(13)sr.png"];
+    setD.push(Dsr);
+    var Esr = ["img/setE/(1)sr.png",
+"img/setE/(2)sr.png",
+"img/setE/(3)sr.png",
+"img/setE/(4)sr.png",
+"img/setE/(5)sr.png",
+"img/setE/(6)sr.png",
+"img/setE/(7)sr.png",
+"img/setE/(8)sr.png",
+"img/setE/(9)sr.png",
+"img/setE/(10)sr.png",
+"img/setE/(11)sr.png",
+"img/setE/(12)sr.png",
+"img/setE/(13)sr.png"];
+    setE.push(Esr);
+    var Fsr = ["img/setF/(1)sr.png",
+"img/setF/(2)sr.png",
+"img/setF/(3)sr.png",
+"img/setF/(4)sr.png",
+"img/setF/(5)sr.png",
+"img/setF/(6)sr.png",
+"img/setF/(7)sr.png",
+"img/setF/(8)sr.png",
+"img/setF/(9)sr.png",
+"img/setF/(10)sr.png",
+"img/setF/(11)sr.png",
+"img/setF/(12)sr.png",
+"img/setF/(13)sr.png"];
+    setF.push(Fsr);
+    
+    var Ar = [
+        "img/setA/(1)r.png",
+"img/setA/(2)r.png",
+"img/setA/(3)r.png",
+"img/setA/(4)r.png",
+"img/setA/(5)r.png",
+"img/setA/(6)r.png",
+"img/setA/(7)r.png",
+"img/setA/(8)r.png",
+"img/setA/(9)r.png",
+"img/setA/(10)r.png",
+"img/setA/(11)r.png",
+"img/setA/(12)r.png",
+"img/setA/(13)r.png"
+    ];
+    setA.push(Ar);
+    var Br = [
+        "img/setB/(1)r.png",
+"img/setB/(2)r.png",
+"img/setB/(3)r.png",
+"img/setB/(4)r.png",
+"img/setB/(5)r.png",
+"img/setB/(6)r.png",
+"img/setB/(7)r.png",
+"img/setB/(8)r.png",
+"img/setB/(9)r.png",
+"img/setB/(10)r.png",
+"img/setB/(11)r.png",
+"img/setB/(12)r.png",
+"img/setB/(13)r.png"
+    ];
+    setB.push(Br);
+    var Cr = [
+        "img/setC/(1)r.png",
+"img/setC/(2)r.png",
+"img/setC/(3)r.png",
+"img/setC/(4)r.png",
+"img/setC/(5)r.png",
+"img/setC/(6)r.png",
+"img/setC/(7)r.png",
+"img/setC/(8)r.png",
+"img/setC/(9)r.png",
+"img/setC/(10)r.png",
+"img/setC/(11)r.png",
+"img/setC/(12)r.png",
+"img/setC/(13)r.png"
+    ];
+    setC.push(Cr);
+    var Dr = [
+        "img/setD/(1)r.png",
+"img/setD/(2)r.png",
+"img/setD/(3)r.png",
+"img/setD/(4)r.png",
+"img/setD/(5)r.png",
+"img/setD/(6)r.png",
+"img/setD/(7)r.png",
+"img/setD/(8)r.png",
+"img/setD/(9)r.png",
+"img/setD/(10)r.png",
+"img/setD/(11)r.png",
+"img/setD/(12)r.png",
+"img/setD/(13)r.png"
+    ];
+    setD.push(Dr);
+    var Er = [
+        "img/setE/(1)r.png",
+"img/setE/(2)r.png",
+"img/setE/(3)r.png",
+"img/setE/(4)r.png",
+"img/setE/(5)r.png",
+"img/setE/(6)r.png",
+"img/setE/(7)r.png",
+"img/setE/(8)r.png",
+"img/setE/(9)r.png",
+"img/setE/(10)r.png",
+"img/setE/(11)r.png",
+"img/setE/(12)r.png",
+"img/setE/(13)r.png"
+    ];
+    setE.push(Er);
+    var Fr = [
+        "img/setF/(1)r.png",
+"img/setF/(2)r.png",
+"img/setF/(3)r.png",
+"img/setF/(4)r.png",
+"img/setF/(5)r.png",
+"img/setF/(6)r.png",
+"img/setF/(7)r.png",
+"img/setF/(8)r.png",
+"img/setF/(9)r.png",
+"img/setF/(10)r.png",
+"img/setF/(11)r.png",
+"img/setF/(12)r.png",
+"img/setF/(13)r.png"
+    ];
+    setF.push(Fr);
+    
+    var As = ["img/setA/(1)s.png",
+"img/setA/(2)s.png",
+"img/setA/(3)s.png",
+"img/setA/(4)s.png",
+"img/setA/(5)s.png",
+"img/setA/(6)s.png",
+"img/setA/(7)s.png",
+"img/setA/(8)s.png",
+"img/setA/(9)s.png",
+"img/setA/(10)s.png",
+"img/setA/(11)s.png",
+"img/setA/(12)s.png",
+"img/setA/(13)s.png"];
+    setA.push(As);
+    var Bs = ["img/setB/(1)s.png",
+"img/setB/(2)s.png",
+"img/setB/(3)s.png",
+"img/setB/(4)s.png",
+"img/setB/(5)s.png",
+"img/setB/(6)s.png",
+"img/setB/(7)s.png",
+"img/setB/(8)s.png",
+"img/setB/(9)s.png",
+"img/setB/(10)s.png",
+"img/setB/(11)s.png",
+"img/setB/(12)s.png",
+"img/setB/(13)s.png"];
+    setB.push(Bs);
+    var Cs = ["img/setC/(1)s.png",
+"img/setC/(2)s.png",
+"img/setC/(3)s.png",
+"img/setC/(4)s.png",
+"img/setC/(5)s.png",
+"img/setC/(6)s.png",
+"img/setC/(7)s.png",
+"img/setC/(8)s.png",
+"img/setC/(9)s.png",
+"img/setC/(10)s.png",
+"img/setC/(11)s.png",
+"img/setC/(12)s.png",
+"img/setC/(13)s.png"];
+    setC.push(Cs);
+    var Ds = ["img/setD/(1)s.png",
+"img/setD/(2)s.png",
+"img/setD/(3)s.png",
+"img/setD/(4)s.png",
+"img/setD/(5)s.png",
+"img/setD/(6)s.png",
+"img/setD/(7)s.png",
+"img/setD/(8)s.png",
+"img/setD/(9)s.png",
+"img/setD/(10)s.png",
+"img/setD/(11)s.png",
+"img/setD/(12)s.png",
+"img/setD/(13)s.png"];
+    setD.push(Ds);
+    var Es = ["img/setE/(1)s.png",
+"img/setE/(2)s.png",
+"img/setE/(3)s.png",
+"img/setE/(4)s.png",
+"img/setE/(5)s.png",
+"img/setE/(6)s.png",
+"img/setE/(7)s.png",
+"img/setE/(8)s.png",
+"img/setE/(9)s.png",
+"img/setE/(10)s.png",
+"img/setE/(11)s.png",
+"img/setE/(12)s.png",
+"img/setE/(13)s.png"];
+    setE.push(Es);
+    var Fs = ["img/setF/(1)s.png",
+"img/setF/(2)s.png",
+"img/setF/(3)s.png",
+"img/setF/(4)s.png",
+"img/setF/(5)s.png",
+"img/setF/(6)s.png",
+"img/setF/(7)s.png",
+"img/setF/(8)s.png",
+"img/setF/(9)s.png",
+"img/setF/(10)s.png",
+"img/setF/(11)s.png",
+"img/setF/(12)s.png",
+"img/setF/(13)s.png"];
+    setF.push(Fs);
+    
+    var Anorm= ["img/setA/(1).png",
+"img/setA/(2).png",
+"img/setA/(3).png",
+"img/setA/(4).png",
+"img/setA/(5).png",
+"img/setA/(6).png",
+"img/setA/(7).png",
+"img/setA/(8).png",
+"img/setA/(9).png",
+"img/setA/(10).png",
+"img/setA/(11).png",
+"img/setA/(12).png",
+"img/setA/(13).png"];
+    setA.push(Anorm);
+    var Bnorm= ["img/setB/(1).png",
+"img/setB/(2).png",
+"img/setB/(3).png",
+"img/setB/(4).png",
+"img/setB/(5).png",
+"img/setB/(6).png",
+"img/setB/(7).png",
+"img/setB/(8).png",
+"img/setB/(9).png",
+"img/setB/(10).png",
+"img/setB/(11).png",
+"img/setB/(12).png",
+"img/setB/(13).png"];
+    setB.push(Bnorm);
+    var Cnorm= ["img/setC/(1).png",
+"img/setC/(2).png",
+"img/setC/(3).png",
+"img/setC/(4).png",
+"img/setC/(5).png",
+"img/setC/(6).png",
+"img/setC/(7).png",
+"img/setC/(8).png",
+"img/setC/(9).png",
+"img/setC/(10).png",
+"img/setC/(11).png",
+"img/setC/(12).png",
+"img/setC/(13).png"];
+    setC.push(Cnorm);
+    var Dnorm= ["img/setD/(1).png",
+"img/setD/(2).png",
+"img/setD/(3).png",
+"img/setD/(4).png",
+"img/setD/(5).png",
+"img/setD/(6).png",
+"img/setD/(7).png",
+"img/setD/(8).png",
+"img/setD/(9).png",
+"img/setD/(10).png",
+"img/setD/(11).png",
+"img/setD/(12).png",
+"img/setD/(13).png"];
+    setD.push(Dnorm);
+    var Enorm= ["img/setE/(1).png",
+"img/setE/(2).png",
+"img/setE/(3).png",
+"img/setE/(4).png",
+"img/setE/(5).png",
+"img/setE/(6).png",
+"img/setE/(7).png",
+"img/setE/(8).png",
+"img/setE/(9).png",
+"img/setE/(10).png",
+"img/setE/(11).png",
+"img/setE/(12).png",
+"img/setE/(13).png"];
+    setE.push(Enorm);
+    var Fnorm= ["img/setF/(1).png",
+"img/setF/(2).png",
+"img/setF/(3).png",
+"img/setF/(4).png",
+"img/setF/(5).png",
+"img/setF/(6).png",
+"img/setF/(7).png",
+"img/setF/(8).png",
+"img/setF/(9).png",
+"img/setF/(10).png",
+"img/setF/(11).png",
+"img/setF/(12).png",
+"img/setF/(13).png"];
+    setF.push(Fnorm);
+    
+    var Aaudio= ["img/setA/(1).wav",
+"img/setA/(2).wav",
+"img/setA/(3).wav",
+"img/setA/(4).wav",
+"img/setA/(5).wav",
+"img/setA/(6).wav",
+"img/setA/(7).wav",
+"img/setA/(8).wav",
+"img/setA/(9).wav",
+"img/setA/(10).wav",
+"img/setA/(11).wav",
+"img/setA/(12).wav",
+"img/setA/(13).wav"];
+    audioSets.push(Aaudio);
+    var Baudio= ["img/setB/(1).wav",
+"img/setB/(2).wav",
+"img/setB/(3).wav",
+"img/setB/(4).wav",
+"img/setB/(5).wav",
+"img/setB/(6).wav",
+"img/setB/(7).wav",
+"img/setB/(8).wav",
+"img/setB/(9).wav",
+"img/setB/(10).wav",
+"img/setB/(11).wav",
+"img/setB/(12).wav",
+"img/setB/(13).wav"];
+    audioSets.push(Baudio);
+    var Caudio= ["img/setC/(1).wav",
+"img/setC/(2).wav",
+"img/setC/(3).wav",
+"img/setC/(4).wav",
+"img/setC/(5).wav",
+"img/setC/(6).wav",
+"img/setC/(7).wav",
+"img/setC/(8).wav",
+"img/setC/(9).wav",
+"img/setC/(10).wav",
+"img/setC/(11).wav",
+"img/setC/(12).wav",
+"img/setC/(13).wav"];
+    audioSets.push(Caudio);
+    var Daudio= ["img/setD/(1).wav",
+"img/setD/(2).wav",
+"img/setD/(3).wav",
+"img/setD/(4).wav",
+"img/setD/(5).wav",
+"img/setD/(6).wav",
+"img/setD/(7).wav",
+"img/setD/(8).wav",
+"img/setD/(9).wav",
+"img/setD/(10).wav",
+"img/setD/(11).wav",
+"img/setD/(12).wav",
+"img/setD/(13).wav"];
+    audioSets.push(Daudio);
+    var Eaudio= ["img/setE/(1).wav",
+"img/setE/(2).wav",
+"img/setE/(3).wav",
+"img/setE/(4).wav",
+"img/setE/(5).wav",
+"img/setE/(6).wav",
+"img/setE/(7).wav",
+"img/setE/(8).wav",
+"img/setE/(9).wav",
+"img/setE/(10).wav",
+"img/setE/(11).wav",
+"img/setE/(12).wav",
+"img/setE/(13).wav"];
+    audioSets.push(Eaudio);
+    var Faudio= ["img/setF/(1).wav",
+"img/setF/(2).wav",
+"img/setF/(3).wav",
+"img/setF/(4).wav",
+"img/setF/(5).wav",
+"img/setF/(6).wav",
+"img/setF/(7).wav",
+"img/setF/(8).wav",
+"img/setF/(9).wav",
+"img/setF/(10).wav",
+"img/setF/(11).wav",
+"img/setF/(12).wav",
+"img/setF/(13).wav"];
+    audioSets.push(Faudio);
+    var thisAudioSet = audioSets[thisSetnum];
+    
+    var fills = []
+    var tests = []
+    var parts = []
+    
+    var fillfills = function (){
+        for (var i=0;i<=150;i++){
+            fills[i] = filler(thisSetnum);
+        }
+    }
+    
+    var filltests = function (){
+        for (var i=0;i<=150;i++){
+            tests[i] = test(thisSetnum);
+        }
+    }
+    
+    var fillparts = function (){
+        for (var i=0;i<=150;i++){
+            parts[i] = partnergrid(thisSetnum);
+        }
+    }
+    
+    var fillall = function(){
+        fillfills();
+        filltests();
+        fillparts();
+    }
+
+
+    var sfill = function(){
+    return shuffled(getone(fills));}
+    
+    var stest = function(){
+    return shuffled(getone(tests));}
+    
+    var spartner = function(){
+    return shuffled(getone(parts));}
+    
+    var getone = function(array){
+        var theone = array[counter];
+        counter++;
+        return theone;
+    }
+    
+    var shuffled = function (grid) {
+        output = grid.flat();
+        var shuf = jsPsych.randomization.shuffle(output);
+        var newArr = [];
+        while(shuf.length) newArr.push(shuf.splice(0,5)); 
+        return newArr;    
+    }
+    
+    
+    var filler = function(subsetnum) {
+        var nums = [];
+        for (var i=0;i<=12;i++) {
+        nums.push(i);
+        }
+        var options = jsPsych.randomization.shuffle(nums);
+        var labels = ["A","B","C","D","E","F"]
+        var set = window[labels[subsetnum]+"norm"];
+        var rset =window[labels[subsetnum]+"r"];
+        var grid = [
+       
+        [set[options[0]], set[options[1]], set[options[2]], set[options[3]], set[options[4]]],
+        [rset[options[5]], 1, 1, set[options[6]], set[options[7]]],
+        [set[options[8]], set[options[9]], set[options[10]], 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]
+    ];
+        return shuffled(grid);
+    }
+    
+    var test = function(subsetnum) {
+        var nums = [];
+        for (var i=0;i<=12;i++) {
+        nums.push(i);
+        }
+        var options = jsPsych.randomization.shuffle(nums);
+        var labels = ["A","B","C","D","E","F"]
+        var set = window[labels[subsetnum]+"norm"];
+        var sset = window[labels[subsetnum]+"s"];
+        var srset = window[labels[subsetnum]+"sr"]
+        var grid = [
+       
+        [set[options[0]], set[options[1]], set[options[2]], set[options[3]], sset[options[4]]],
+        [srset[options[0]], 1, 1, set[options[6]], set[options[7]]],
+        [set[options[8]], set[options[9]], set[options[10]], 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]
+    ];
+        return shuffled(grid);
+    }
+    
+    var partnergrid = function(subsetnum) {
+        var nums = [];
+        for (var i=0;i<=12;i++) {
+        nums.push(i);
+        }
+        var options = jsPsych.randomization.shuffle(nums);
+        var labels = ["A","B","C","D","E","F"]
+        var set = window[labels[subsetnum]+"norm"];
+        var sset = window[labels[subsetnum]+"s"];
+        var srset = window[labels[subsetnum]+"sr"]
+        var grid = [
+       
+        [set[options[0]], set[options[1]], set[options[2]], set[options[3]], sset[options[4]]],
+        [sset[options[5]], 1, 1, set[options[6]], set[options[7]]],
+        [set[options[8]], set[options[9]], set[options[10]], 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]
+    ];
+        return shuffled(grid);
+    }
+
+    var initialize = {
+        type: "call-function",
+        func: fillall
+    }
+    timeline.push(initialize)
+    
+    var fillerproc = {
+        type: "filler-grid",
+        stimuli: sfill,
+        condition: "filler",
+        image_size: [150, 150],
+        response_ends_trial: true,
+        choices: "t"
+    }
+    
+    var twoproc = {
+        type: "two-grid",
+        stimuli: stest,
+        condition: "common",
+        image_size: [150, 150],
+        response_ends_trial: true,
+        choices: "t"
+    }
+    
+     var privproc = {
+        type: "ego-grid",
+        stimuli: stest,
+        condition: "priv",
+        image_size: [150, 150],
+        response_ends_trial: true,
+        choices: "t"
+    }
+     
+     var partner = {
+        type: "partner-grid",
+        stimuli: spartner,
+        condition: "partner",
+        image_size: [150, 150],
+    }
+
+    var fillertimeline = {
+        timeline: [partner,fillerproc] 
+    }
+    
+     var twotimeline = {
+        timeline: [partner,twoproc] 
+    }
+     
+     var privtimeline = {
+        timeline: [partner,privproc] 
+    }
+     
+// sample function that might be used to check if a subject has given
+// consent to participate.
+var check_consent = function(elem) {
+  if (document.getElementById('consent_checkbox1').checked && document.getElementById('consent_checkbox2').checked && document.getElementById('consent_checkbox3').checked ) {
+    return true;
+  }
+  else {
+    alert("If you wish to participate, you must check all three boxes next to the statements of consent.");
+    return false;
+  }
+  return false;
+};
+    
+    var consent = {
+  type:'external-html',
+  url: "consentform.html",
+  cont_btn: "start",
+  check_fn: check_consent
+};
+//    timeline.push(consent);
+    
+     var debrief = {
+  type:'external-html',
+  url: "debrief.html",
+  cont_btn: "Okay"
+};
+    
+//var startmic = function(){    
+//navigator.mediaDevices.getUserMedia({ audio: true })
+//  .then(stream => {
+//    mediaRecorder = new MediaRecorder(stream);
+//    mediaRecorder.start();
+//
+//    var audioChunks = [];
+//    mediaRecorder.ondataavailable = function(e) {
+//      audioChunks.push(e.data);
+//    };
+//
+//    mediaRecorder.onstop = function(e) {
+//        audioBlob = new Blob(audioChunks, {type:'audio/ogg'});
+//        blobUrl = URL.createObjectURL(audioBlob);
+//        saveAudio(audioBlob);
+////        saveAudio(ID, blobUrl);
+//        console.log(blobUrl);
+////        console.log(audioBlob.arrayBuffer());
+//    };
+//   
+//  });
+    
+var demographic = { // DEMOGRAPHICS FORM
+    type: 'survey-html-form',
+    preamblE: "Thank you for taking part in the experiment today. We would now like you to complete the following questionnaire.",
+    html: demo
+};
+
+var mictest = {
+    type: 'external-html',
+    url: "mictest.html",
+    cont_btn: "start"
+}    
+
+    var proc = { 
+        timeline: jsPsych.randomization.shuffle([fillertimeline,twotimeline,privtimeline,fillertimeline,twotimeline,privtimeline,fillertimeline,twotimeline,privtimeline]),
+        randomize_order: true        
+    }
+//    timeline.push(proc);
+    timeline.push(consent,demographic,debrief);
+    
+   
+    
+     function saveData(name, data){
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', "mturk-datasaver.php"); // 'write_data.php' is the path to the php file described above.
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.send(JSON.stringify({filename: name, filedata: data}));
+     }
+         
+    function saveAudio(blob){
+        fetch('/upload.php', {
+                   method: "POST",
+                   body: blob
+               })
+               .then(response => {
+                   if (response.ok) return response;
+                   else throw Error('Server returned ${response.status}: ${response.statusText}')
+               })
+               .then(response => console.log(response.text()))
+               .catch(err => {
+                   alert(err);
+               });        }
+    
+    
+    jsPsych.init({
+        exclusions: {
+            min_width: 600,
+            min_height: 600,
+            audio: true},        
+        timeline: timeline, 
+        preload_images: thisSet,
+        preload_audio: thisAudioSet,
+        on_finish: function() {
+            mediaRecorder.stop();
+            jsPsych.data.get().addToAll({subject_id:ID});
+            saveData(ID, jsPsych.data.get().csv()); 
+//            saveData(ID, audioBlob);
+//            console.log(blobUrl);
+            jsPsych.data.displayData();
+        }
+    });
+  
+
+</script>
+
+</html>

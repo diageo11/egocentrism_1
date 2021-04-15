@@ -1,0 +1,65 @@
+<div class='demographics'>
+    <h1>Demographics Questionnaire</h1>
+    <div class='form'>
+        <label for='age'>Age: </label>
+        <input type='number' id='age' name='age' min='18' max='100' required>
+    </div>
+    <div class='form'>
+        <label for='gender'>Gender: </label>
+        <select id='gender' name='gender_drop' required>
+            <option disabled selected value> -- select an option -- </option>
+            <option>Prefer not to say</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Non-binary</option>
+        </select>
+    </div>
+    <div class='form'>
+        <label for='education'>What is the highest level of education completed? </label>
+        <select id='education' name='education_drop' required>
+            <option disabled selected value> -- select an option -- </option>
+            <option>Prefer not to say</option>
+            <option>Secondary or High School</option>
+            <option>Vocational Qualification</option>
+            <option>Bachelor's Degree</option>
+            <option>Master's or Higher</option>
+        </select>
+    </div>
+    <div class='form'>
+        <label for='speech'>How often do you use speech agents like Alexa, Siri, or Google Assistant? </label>
+        <select id='speech' name='speech_drop' required>
+            <option disabled selected value> -- select an option -- </option>
+            <option>Daily</option>
+            <option>A few times per week</option>
+            <option>A few times per month</option>
+            <option>Rarely</option>
+			<option>Never</option>
+        </select>
+    </div>
+    <div class='form optionals hidden'>
+        <label for='assistant'>Which of the following do you use most often: </label>
+        <select id='assistant' name='assistant_drop'>
+            <option disabled selected value> -- select an option -- </option>
+            <option>Amazon Alexa</option>
+            <option>Apple's Siri</option>
+            <option>Google Assistant</option>
+            <option>Cortana</option>
+            <option>Other</option>
+            <option>I don't use speech agents</option>
+        </select>
+    </div>
+    <div class='form hidden' id='ass_holder'>
+        <label for='other_ass'>Other assistant used: </label>
+        <input type='text' id='other_ass' name='other_assistant' autocomplete="off">
+    </div>
+	 <div class='form'>
+        <label for='partnerID'>I thought the partner I played the game with today was: </label>
+        <select id='partnerID' name='partnerDrop' required>
+            <option disabled selected value> -- select an option -- </option>
+            <option>Another person</option>
+            <option>A computer</option>
+            <option>Not sure</option>
+        </select>
+    </div>
+
+</div>

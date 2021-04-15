@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+    <script type="text/javascript" src="jspsych.js"></script>
+    <script type="text/javascript" src="jspsych-ego-grid.js"></script>
+    <script type="text/javascript" src="jspsych-external-html.js"></script>
+    <script type="text/javascript" src="jspsych-partner-grid.js"></script>
+     <script type="text/javascript" src="jspsych-show-grid.js"></script>
+    <script type="text/javascript" src="jspsych-two-grid.js"></script>
+    <script type="text/javascript" src="jspsych-filler-grid.js"></script>
+    <script type="text/javascript" src="jspsych-call-function.js"></script>
+    <script type="text/javascript" src="jspsych-survey-html-form.js"></script>
+    <script type="text/javascript" src="human-partner-sandbox.js"></script>
+<!--    <script type="text/javascript" src="gridtest-1710.html"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <link type="text/css" href="jspsych.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="#" />
+    </head>
+
+
+
+<script>
+    var fills = [];
+    var tests = [];
+    var images = [];
+    var stimuli = []
+    var counter = 0;
+    var mediaRecorder;
+//    var turkInfo = jsPsych.turk.turkInfo();
+//    var ID = String(turkInfo.workerId + "1");
+    var audioBlob;
+    var blobUrl;
+    
+    
+    
+var demo = `<div id = "demo">
+<h1>Demographic Questionnaire </h1>
+<h3>Have you previously taken part in a similar experiment?</h3>
+    <input name="similar" type="radio" value="Yes"  /> Yes <br>
+     <input name="similar" type="radio" value="No" /> No
+<h3>Age</h3>
+    <input name="age" type="number" />
+<h3>Sex</h3>
+    <input name="sex" type="radio" value="Male"  /> Male <br>
+    <input name="sex" type="radio" value="Female" /> Female <br>
+    <input name="sex" type="radio" value="Prefer not to say" /> Prefer not to say <br>
+    <input name="sex" type="radio" value="Not listed" /> Not listed   <input type="text"> 
+    
+<h3>Nationality</h3>
+    <input name="nationality" type="text" />
+<h3>Profession</h3>
+    <input name="profession" type="text" />
+<h3>Subject Area</h3>
+    <input name="subjject" type="text" />
+<h3>How would you describe your level of spoken English?</h3>
+    <input name="native" type="radio" value="Native" />Native <br>
+    <input name="native" type="radio" value="Near native" />Near native <br>
+    <input name="native" type="radio" value="Non-native" />Non-native 
+<h3>On average, how long do you spend on a computer each day?</h3>
+    <input name="howlong" type="radio" value="0-1" />One hour or less per day<br>
+    <input name="howlong" type="radio" value="1-2" />1-2 hours per day<br>
+    <input name="howlong" type="radio" value="2-4" />2-4 hours per day <br>
+    <input name="howlong" type="radio" value="4+" />More than 4 hours per day
+<h3>How would you describe your computer experience? </h3>
+    <input name="experience" type="radio" value="No Experience" />No Experience<br>
+    <input name="experience" type="radio" value="Beginner" />Beginner<br>
+    <input name="experience" type="radio" value="Intermediate" />Intermediate<br>
+    <input name="experience" type="radio" value="Advanced" />Advanced <br>
+    <input name="experience" type="radio" value="Expert" />Expert
+<h3>How would you describe your computer programming experience? </h3>
+    <input name="progexperience" type="radio" value="No Experience" />No Experience<br>
+    <input name="progexperience" type="radio" value="Beginner" />Beginner<br>
+    <input name="progexperience" type="radio" value="Intermediate" />Intermediate<br>
+    <input name="progexperience" type="radio" value="Advanced" />Advanced <br>
+    <input name="progexperience" type="radio" value="Expert" />Expert
+<h3>Have you previously used services where you speak to a computer or
+automated system (e.g. telephone banking services, automated ticket booking
+lines, Siri, Google Now etc)? </h3>
+    <input name="siri" type="radio" value="Yes" />Yes<br>
+    <input name="siri" type="radio" value="No" />No<br>
+    <input name="siri" type="radio" value="Not Sure" />Not Sure<br>
+<h3>How frequently do you use services where you speak to a computer or
+    automated system?</h3>
+    Very Infrequently 
+    <input name="sirifreq" type="radio" value="1" />
+    <input name="sirifreq" type="radio" value="2" />
+    <input name="sirifreq" type="radio" value="3" />
+    <input name="sirifreq" type="radio" value="4" />
+    <input name="sirifreq" type="radio" value="5" />
+    <input name="sirifreq" type="radio" value="6" />
+    <input name="sirifreq" type="radio" value="7" />
+    Very Frequently
+<h3>I thought the partner I played the game with today was:</h3>
+    <input name="partnerID" type="radio" value="Human" /> A person <br>
+    <input name="partnerID" type="radio" value="Computer" /> A computer
+    
+</div>`
+
+var mictest = `<body>
+    <H1>Microphone Testing</H1>
+    <p>To take part in this experiment you will require a working microphone. Please test your voice using the record button to make sure that your microphone works.</p>
+    <button onclick='record()' id='record'>Record</button>
+    <button onclick='stop()' id='stop' disabled>Stop</button>
+    <h2>Information Logs</h2>
+    <div id='logs'></div>
+    <h2>Recordings</h2>
+    <div id='recordings'></div>
+
+    <div>
+        <p>Please make sure to listen to a few recordings before you press continue. Make sure that you can clearly hear your voice at a regular volume.</p> <button onclick='startExperiment()' id='start' disabled>Continue</button>
+    </div>
+`
+
+    var sr = ["img/stimuli/(1)sr.png",
+"img/stimuli/(2)sr.png",
+"img/stimuli/(3)sr.png",
+"img/stimuli/(4)sr.png",
+"img/stimuli/(5)sr.png",
+"img/stimuli/(6)sr.png",
+"img/stimuli/(7)sr.png",
+"img/stimuli/(8)sr.png",
+"img/stimuli/(9)sr.png",
+"img/stimuli/(10)sr.png",
+"img/stimuli/(11)sr.png",
+"img/stimuli/(12)sr.png",
+"img/stimuli/(13)sr.png"];
+    stimuli.push(sr);
+    
+    var r = [
+        "img/stimuli/(1)r.png",
+"img/stimuli/(2)r.png",
+"img/stimuli/(3)r.png",
+"img/stimuli/(4)r.png",
+"img/stimuli/(5)r.png",
+"img/stimuli/(6)r.png",
+"img/stimuli/(7)r.png",
+"img/stimuli/(8)r.png",
+"img/stimuli/(9)r.png",
+"img/stimuli/(10)r.png",
+"img/stimuli/(11)r.png",
+"img/stimuli/(12)r.png",
+"img/stimuli/(13)r.png"
+    ];
+    stimuli.push(r);
+   
+    
+    var small = ["img/stimuli/(1)s.png",
+"img/stimuli/(2)s.png",
+"img/stimuli/(3)s.png",
+"img/stimuli/(4)s.png",
+"img/stimuli/(5)s.png",
+"img/stimuli/(6)s.png",
+"img/stimuli/(7)s.png",
+"img/stimuli/(8)s.png",
+"img/stimuli/(9)s.png",
+"img/stimuli/(10)s.png",
+"img/stimuli/(11)s.png",
+"img/stimuli/(12)s.png",
+"img/stimuli/(13)s.png"];
+    stimuli.push(small);
+    
+    
+    var norm= ["img/stimuli/(1).png",
+"img/stimuli/(2).png",
+"img/stimuli/(3).png",
+"img/stimuli/(4).png",
+"img/stimuli/(5).png",
+"img/stimuli/(6).png",
+"img/stimuli/(7).png",
+"img/stimuli/(8).png",
+"img/stimuli/(9).png",
+"img/stimuli/(10).png",
+"img/stimuli/(11).png",
+"img/stimuli/(12).png",
+"img/stimuli/(13).png"];
+    stimuli.push(norm);
+    
+    var grey = ["img/stimuli/(1)g.png",
+"img/stimuli/(2)g.png",
+"img/stimuli/(3)g.png",
+"img/stimuli/(4)g.png",
+"img/stimuli/(5)g.png",
+"img/stimuli/(6)g.png",
+"img/stimuli/(7)g.png",
+"img/stimuli/(8)g.png",
+"img/stimuli/(9)g.png",
+"img/stimuli/(10)g.png",
+"img/stimuli/(11)g.png",
+"img/stimuli/(12)g.png",
+"img/stimuli/(13)g.png"];
+    stimuli.push(grey);
+
+    
+    var smallgrey = ["img/stimuli/(1)sg.png",
+"img/stimuli/(2)sg.png",
+"img/stimuli/(3)sg.png",
+"img/stimuli/(4)sg.png",
+"img/stimuli/(5)sg.png",
+"img/stimuli/(6)sg.png",
+"img/stimuli/(7)sg.png",
+"img/stimuli/(8)sg.png",
+"img/stimuli/(9)sg.png",
+"img/stimuli/(10)sg.png",
+"img/stimuli/(11)sg.png",
+"img/stimuli/(12)sg.png",
+"img/stimuli/(13)sg.png"];
+    stimuli.push(smallgrey);
+    
+    var audio= ["img/stimuli/(1).wav",
+"img/stimuli/(2).wav",
+"img/stimuli/(3).wav",
+"img/stimuli/(4).wav",
+"img/stimuli/(5).wav",
+"img/stimuli/(6).wav",
+"img/stimuli/(7).wav",
+"img/stimuli/(8).wav",
+"img/stimuli/(9).wav",
+"img/stimuli/(10).wav",
+"img/stimuli/(11).wav",
+"img/stimuli/(12).wav",
+"img/stimuli/(13).wav"];
+   
+    var thisAudioSet = audio;
+    
+    var fills = []
+    var tests = []
+    var parts = []
+    
+    var fillfills = function (){
+        for (var i=0;i<=150;i++){
+            fills[i] = filler(thisSetnum);
+        }
+    }
+    
+    var filltests = function (){
+        for (var i=0;i<=150;i++){
+            tests[i] = test(thisSetnum);
+        }
+    }
+    
+    var fillparts = function (){
+        for (var i=0;i<=150;i++){
+            parts[i] = partnergrid(thisSetnum);
+        }
+    }
+    
+    var fillall = function(){
+        fillfills();
+        filltests();
+        fillparts();
+    }
+
+
+    var sfill = function(){
+    return shuffled(getone(fills));}
+    
+    var stest = function(){
+    return shuffled(getone(tests));}
+    
+    var spartner = function(){
+    return shuffled(getone(parts));}
+    
+    var getone = function(array){
+        var theone = array[counter];
+        counter++;
+        return theone;
+    }
+    
+    var shuffled = function (grid) {
+        output = grid.flat();
+        var shuf = jsPsych.randomization.shuffle(output);
+        var newArr = [];
+        while(shuf.length) newArr.push(shuf.splice(0,5)); 
+        return newArr;    
+    }
+    
+    var targetnums = [3,4,5,6,11,12];
+    var fillernums = [1,2,7,8,9,10,13];
+    
+
+
+        
+    var Agrids = [
+    [[0, smallgrey[targetnums[2]], 0, norm[fillernums[5]], 0],
+    [1, grey[fillernums[0]], 1, 0, 0],
+    [0, norm[targetnums[1]], r[targetnums[0]], 0, 0],
+    [norm[fillernums[3]], 0, small[targetnums[1]], 0, 0],
+    [norm[targetnums[2]], norm[fillernums[1]],
+    norm[fillernums[4]], 0, norm[fillernums[2]]]],
+
+    [[0, smallgrey[targetnums[2]], 0, norm[fillernums[5]], 0],
+    [1, norm[fillernums[0]], 1, 0, 0],
+    [0, r[targetnums[1]], norm[targetnums[0]], 0, 0],
+    [norm[fillernums[3]], 0, small[targetnums[1]], 0, 0],
+    [norm[targetnums[2]], grey[fillernums[1]],
+    norm[fillernums[4]], 0, norm[fillernums[2]]]]
+
+    [[0, smallgrey[targetnums[2]], 0, norm[fillernums[5]], 0],
+    [1, norm[fillernums[0]], 1, 0, 0],
+    [0, norm[targetnums[1]], norm[targetnums[0]], 0, 0],
+    [norm[fillernums[3]], 0, small[targetnums[1]], 0, 0],
+    [r[targetnums[2]], norm[fillernums[1]],
+    norm[fillernums[4]], 0, grey[fillernums[2]]]],
+
+    [[0, smallgrey[targetnums[2]], 0, norm[fillernums[5]], 0],
+    [1, r[fillernums[0]], 1, 0, 0],
+    [0, norm[targetnums[1]], norm[targetnums[0]], 0, 0],
+    [grey[fillernums[3]], 0, small[targetnums[1]], 0, 0],
+    [norm[targetnums[2]], norm[fillernums[1]],
+    norm[fillernums[4]], 0, norm[fillernums[2]]]],
+
+    [[0, smallgrey[targetnums[2]], 0, norm[fillernums[5]], 0],
+    [1, norm[fillernums[0]], 1, 0, 0],
+    [0, norm[targetnums[1]], norm[targetnums[0]], 0, 0],
+    [norm[fillernums[3]], 0, small[targetnums[1]], 0, 0],
+    [norm[targetnums[2]], r[fillernums[1]],
+    grey[fillernums[4]], 0, norm[fillernums[2]]]],
+
+    [[0, smallgrey[targetnums[2]], 0, grey[fillernums[5]], 0],
+    [1, norm[fillernums[0]], 1, 0, 0],
+    [0, norm[targetnums[1]], norm[targetnums[0]], 0, 0],
+    [norm[fillernums[3]], 0, small[targetnums[1]], 0, 0],
+    [norm[targetnums[2]], norm[fillernums[1]],
+    norm[fillernums[4]], 0, r[fillernums[2]]]]
+    ];
+    
+    var Bgrids = [
+    [[0, norm[targetnums[3]], norm[fillernums[3]], 0,
+    norm[fillernums[2]]],
+    [0, norm[fillernums[4]], r[targetnums[1]], 0, 0],
+    [norm[fillernums[5]], 0, norm[targetnums[2]],
+    grey[fillernums[1]], smallgrey[targetnums[3]]],
+    [norm[fillernums[6]], 0, 0, 0, 0],
+    [1, 0, 0, 1, small[targetnums[2]]]],
+
+    [[0, norm[targetnums[3]], norm[fillernums[3]], 0,
+    grey[fillernums[2]]],
+    [0, norm[fillernums[4]], norm[targetnums[1]], 0, 0],
+    [norm[fillernums[5]], 0, r[targetnums[2]],
+    norm[fillernums[1]], smallgrey[targetnums[3]]],
+    [norm[fillernums[6]], 0, 0, 0, 0],
+    [1, 0, 0, 1, small[targetnums[2]]]],
+
+    [[0, r[targetnums[3]], grey[fillernums[3]], 0,
+    norm[fillernums[2]]],
+    [0, norm[fillernums[4]], norm[targetnums[1]], 0, 0],
+    [norm[fillernums[5]], 0, norm[targetnums[2]],
+    norm[fillernums[1]], smallgrey[targetnums[3]]],
+    [norm[fillernums[6]], 0, 0, 0, 0],
+    [1, 0, 0, 1, small[targetnums[2]]]],
+
+    [[0, norm[targetnums[3]], norm[fillernums[3]], 0,
+    norm[fillernums[2]]],
+    [0, grey[fillernums[4]], norm[targetnums[1]], 0, 0],
+    [norm[fillernums[5]], 0, norm[targetnums[2]],
+    r[fillernums[1]], smallgrey[targetnums[3]]],
+    [norm[fillernums[6]], 0, 0, 0, 0],
+    [1, 0, 0, 1, small[targetnums[2]]]],
+
+    [[0, norm[targetnums[3]], norm[fillernums[3]], 0,
+    r[fillernums[2]]],
+    [0, norm[fillernums[4]], norm[targetnums[1]], 0, 0],
+    [grey[fillernums[5]], 0, norm[targetnums[2]],
+    norm[fillernums[1]], smallgrey[targetnums[3]]],
+    [norm[fillernums[6]], 0, 0, 0, 0],
+    [1, 0, 0, 1, small[targetnums[2]]]],
+
+    [[0, norm[targetnums[3]], r[fillernums[3]], 0,
+    norm[fillernums[2]]],
+    [0, norm[fillernums[4]], norm[targetnums[1]], 0, 0],
+    [norm[fillernums[5]], 0, norm[targetnums[2]],
+    norm[fillernums[1]], smallgrey[targetnums[3]]],
+    [grey[fillernums[6]], 0, 0, 0, 0],
+    [1, 0, 0, 1, small[targetnums[2]]]]
+    ];
+    var Cgrids = [
+    [[small[targetnums[3]], 0, 0, norm[fillernums[3]], 0],
+    [1, 0, norm[fillernums[0]], 0, norm[targetnums[3]]],
+    [norm[fillernums[6]], grey[fillernums[2]], 0,
+    r[targetnums[2]], 0],
+    [norm[fillernums[4]], 1, 0, norm[fillernums[5]], 0],
+    [0, smallgrey[targetnums[4]], 0, 0, norm[targetnums[4]]]],
+
+    [[small[targetnums[3]], 0, 0, grey[fillernums[3]], 0],
+    [1, 0, norm[fillernums[0]], 0, r[targetnums[3]]],
+    [norm[fillernums[6]], norm[fillernums[2]], 0,
+    norm[targetnums[2]], 0],
+    [norm[fillernums[4]], 1, 0, norm[fillernums[5]], 0],
+    [0, smallgrey[targetnums[4]], 0, 0, norm[targetnums[4]]]],
+
+    [[small[targetnums[3]], 0, 0, norm[fillernums[3]], 0],
+    [1, 0, norm[fillernums[0]], 0, norm[targetnums[3]]],
+    [norm[fillernums[6]], norm[fillernums[2]], 0,
+    norm[targetnums[2]], 0],
+    [grey[fillernums[4]], 1, 0, norm[fillernums[5]], 0],
+    [0, smallgrey[targetnums[4]], 0, 0, r[targetnums[4]]]],
+
+    [[small[targetnums[3]], 0, 0, norm[fillernums[3]], 0],
+    [1, 0, norm[fillernums[0]], 0, norm[targetnums[3]]],
+    [norm[fillernums[6]], r[fillernums[2]], 0,
+    norm[targetnums[2]], 0],
+    [norm[fillernums[4]], 1, 0, grey[fillernums[5]], 0],
+    [0, smallgrey[targetnums[4]], 0, 0, norm[targetnums[4]]]],
+
+    [[small[targetnums[3]], 0, 0, r[fillernums[3]], 0],
+    [1, 0, norm[fillernums[0]], 0, norm[targetnums[3]]],
+    [grey[fillernums[6]], norm[fillernums[2]], 0,
+    norm[targetnums[2]], 0],
+    [norm[fillernums[4]], 1, 0, norm[fillernums[5]], 0],
+    [0, smallgrey[targetnums[4]], 0, 0, norm[targetnums[4]]]],
+
+    [[small[targetnums[3]], 0, 0, norm[fillernums[3]], 0],
+    [1, 0, grey[fillernums[0]], 0, norm[targetnums[3]]],
+    [norm[fillernums[6]], norm[fillernums[2]], 0,
+    norm[targetnums[2]], 0],
+    [r[fillernums[4]], 1, 0, norm[fillernums[5]], 0],
+    [0, smallgrey[targetnums[4]], 0, 0, norm[targetnums[4]]]]
+    ];
+    var Dgrids = [
+    [[0, r[targetnums[3]], 0, 0, 0],
+    [norm[targetnums[5]], 0, norm[fillernums[6]],
+    norm[targetnums[4]], norm[fillernums[4]]],
+    [0, 0, 1, norm[fillernums[5]], grey[fillernums[3]]],
+    [norm[fillernums[1]], 1, small[targetnums[4]], 0,
+    norm[fillernums[0]]],
+    [0, 0, 0, smallgrey[targetnums[5]], 0]],
+
+    [[0, norm[targetnums[3]], 0, 0, 0],
+    [norm[targetnums[5]], 0, norm[fillernums[6]],
+    r[targetnums[4]], grey[fillernums[4]]],
+    [0, 0, 1, norm[fillernums[5]], norm[fillernums[3]]],
+    [norm[fillernums[1]], 1, small[targetnums[4]], 0,
+    norm[fillernums[0]]],
+    [0, 0, 0, smallgrey[targetnums[5]], 0]],
+
+    [[0, norm[targetnums[3]], 0, 0, 0],
+    [r[targetnums[5]], 0, norm[fillernums[6]],
+    norm[targetnums[4]], norm[fillernums[4]]],
+    [0, 0, 1, grey[fillernums[5]], norm[fillernums[3]]],
+    [norm[fillernums[1]], 1, small[targetnums[4]], 0,
+    norm[fillernums[0]]],
+    [0, 0, 0, smallgrey[targetnums[5]], 0]],
+
+    [[0, norm[targetnums[3]], 0, 0, 0],
+    [norm[targetnums[5]], 0, grey[fillernums[6]],
+    norm[targetnums[4]], norm[fillernums[4]]],
+    [0, 0, 1, norm[fillernums[5]], r[fillernums[3]]],
+    [norm[fillernums[1]], 1, small[targetnums[4]], 0,
+    norm[fillernums[0]]],
+    [0, 0, 0, smallgrey[targetnums[5]], 0]],
+
+    [[0, norm[targetnums[3]], 0, 0, 0],
+    [norm[targetnums[5]], 0, norm[fillernums[6]],
+    norm[targetnums[4]], r[fillernums[4]]],
+    [0, 0, 1, norm[fillernums[5]], norm[fillernums[3]]],
+    [norm[fillernums[1]], 1, small[targetnums[4]], 0,
+    grey[fillernums[0]]],
+    [0, 0, 0, smallgrey[targetnums[5]], 0]],
+
+    [[0, norm[targetnums[3]], 0, 0, 0],
+    [norm[targetnums[5]], 0, norm[fillernums[6]],
+    norm[targetnums[4]], norm[fillernums[4]]],
+    [0, 0, 1, r[fillernums[5]], norm[fillernums[3]]],
+    [grey[fillernums[1]], 1, small[targetnums[4]], 0,
+    norm[fillernums[0]]],
+    [0, 0, 0, smallgrey[targetnums[5]], 0]]
+    ];
+    var Egrids = [
+    [[norm[targetnums[5]], 0, 0, norm[fillernums[1]], 0],
+    [norm[fillernums[2]], 0, r[targetnums[4]], 0,
+    small[targetnums[5]]],
+    [1, norm[targetnums[6]], 0, 1, norm[fillernums[6]]],
+    [0, 0, 0, 0, norm[fillernums[5]]],
+    [grey[fillernums[4]], 0, norm[fillernums[0]],
+    smallgrey[targetnums[6]], 0]],
+
+    [[r[targetnums[5]], 0, 0, norm[fillernums[1]], 0],
+    [norm[fillernums[2]], 0, norm[targetnums[4]], 0,
+    small[targetnums[5]]],
+    [1, norm[targetnums[6]], 0, 1, norm[fillernums[6]]],
+    [0, 0, 0, 0, grey[fillernums[5]]],
+    [norm[fillernums[4]], 0, norm[fillernums[0]],
+    smallgrey[targetnums[6]], 0]],
+
+    [[norm[targetnums[5]], 0, 0, norm[fillernums[1]], 0],
+    [norm[fillernums[2]], 0, norm[targetnums[4]], 0,
+    small[targetnums[5]]],
+    [1, r[targetnums[6]], 0, 1, grey[fillernums[6]]],
+    [0, 0, 0, 0, norm[fillernums[5]]],
+    [norm[fillernums[4]], 0, norm[fillernums[0]],
+    smallgrey[targetnums[6]], 0]],
+
+    [[norm[targetnums[5]], 0, 0, norm[fillernums[1]], 0],
+    [norm[fillernums[2]], 0, norm[targetnums[4]], 0,
+    small[targetnums[5]]],
+    [1, norm[targetnums[6]], 0, 1, norm[fillernums[6]]],
+    [0, 0, 0, 0, norm[fillernums[5]]],
+    [r[fillernums[4]], 0, grey[fillernums[0]],
+    smallgrey[targetnums[6]], 0]],
+
+    [[norm[targetnums[5]], 0, 0, grey[fillernums[1]], 0],
+    [norm[fillernums[2]], 0, norm[targetnums[4]], 0,
+    small[targetnums[5]]],
+    [1, norm[targetnums[6]], 0, 1, norm[fillernums[6]]],
+    [0, 0, 0, 0, r[fillernums[5]]],
+    [norm[fillernums[4]], 0, norm[fillernums[0]],
+    smallgrey[targetnums[6]], 0]],
+
+    [[norm[targetnums[5]], 0, 0, norm[fillernums[1]], 0],
+    [grey[fillernums[2]], 0, norm[targetnums[4]], 0,
+    small[targetnums[5]]],
+    [1, norm[targetnums[6]], 0, 1, r[fillernums[6]]],
+    [0, 0, 0, 0, norm[fillernums[5]]],
+    [norm[fillernums[4]], 0, norm[fillernums[0]],
+    smallgrey[targetnums[6]], 0]]
+    ];
+    var Fgrids = [
+    
+    [[norm[fillernums[2]], 1, 0, norm[targetnums[0]], 0],
+    [0, r[targetnums[5]], norm[fillernums[1]],
+    smallgrey[targetnums[0]], 0],
+    [norm[fillernums[6]], 0, small[targetnums[6]], 0,
+    norm[fillernums[0]]],
+    [norm[fillernums[3]], 0, 0, 1, grey[fillernums[5]]],
+    [0, 0, 0, 0, norm[targetnums[6]]]],
+
+    [[norm[fillernums[2]], 1, 0, norm[targetnums[0]], 0],
+    [0, norm[targetnums[5]], norm[fillernums[1]],
+    smallgrey[targetnums[0]], 0],
+    [grey[fillernums[6]], 0, small[targetnums[6]], 0,
+    norm[fillernums[0]]],
+    [norm[fillernums[3]], 0, 0, 1, norm[fillernums[5]]],
+    [0, 0, 0, 0, r[targetnums[6]]]],
+
+    [[norm[fillernums[2]], 1, 0, r[targetnums[0]], 0],
+    [0, norm[targetnums[5]], norm[fillernums[1]],
+    smallgrey[targetnums[0]], 0],
+    [norm[fillernums[6]], 0, small[targetnums[6]], 0,
+    grey[fillernums[0]]],
+    [norm[fillernums[3]], 0, 0, 1, norm[fillernums[5]]],
+    [0, 0, 0, 0, norm[targetnums[6]]]],
+
+    [[norm[fillernums[2]], 1, 0, norm[targetnums[0]], 0],
+    [0, norm[targetnums[5]], grey[fillernums[1]],
+    smallgrey[targetnums[0]], 0],
+    [norm[fillernums[6]], 0, small[targetnums[6]], 0,
+    norm[fillernums[0]]],
+    [norm[fillernums[3]], 0, 0, 1, r[fillernums[5]]],
+    [0, 0, 0, 0, norm[targetnums[6]]]],
+
+    [[grey[fillernums[2]], 1, 0, norm[targetnums[0]], 0],
+    [0, norm[targetnums[5]], norm[fillernums[1]],
+    smallgrey[targetnums[0]], 0],
+    [r[fillernums[6]], 0, small[targetnums[6]], 0,
+    norm[fillernums[0]]],
+    [norm[fillernums[3]], 0, 0, 1, norm[fillernums[5]]],
+    [0, 0, 0, 0, norm[targetnums[6]]]],
+
+    [[norm[fillernums[2]], 1, 0, norm[targetnums[0]], 0],
+    [0, norm[targetnums[5]], norm[fillernums[1]],
+    smallgrey[targetnums[0]], 0],
+    [norm[fillernums[6]], 0, small[targetnums[6]], 0,
+    r[fillernums[0]]],
+    [grey[fillernums[3]], 0, 0, 1, norm[fillernums[5]]],
+    [0, 0, 0, 0, norm[targetnums[6]]]]
+    ];
+    
+    var oneobjgrids = [
+    Agrids[0], Bgrids[0],  Cgrids[0], Dgrids[0], Egrids[0], Fgrids[0]
+    ];
+    
+    var twovisgrids = [
+        Agrids[1], Bgrids[1], Cgrids[1], Dgrids[1], Egrids[1], Fgrids[1]
+    ];
+    
+    var twoprivgrids = [
+        Agrids[2], Bgrids [2], Cgrids[2], Dgrids [2], Egrids[2], Fgrids [2]
+    ];
+    
+    var fillergrids = [
+        Agrids[3], Agrids[4], Agrids[5], Bgrids[3], Bgrids[4], Bgrids[5], Cgrids[3], Cgrids[4], Cgrids[5], Dgrids[3], Dgrids[4], Dgrids[5], Egrids[3], Egrids[4], Egrids[5], Fgrids[3], Fgrids[4], Fgrids[5]
+    ];
+    
+    var onecounter = 0;
+    var twocounter = 0;
+    var privcounter = 0;
+    var fillergrid = 0;
+    
+    var getonegrid = function() {
+        thegrid = oneobjgrids [onecounter];
+        onecounter += 1;
+        return thegrid;
+    };
+    
+    
+    var partnergrid = function(subsetnum) {
+        var nums = [];
+        for (var i=0;i<=12;i++) {
+        nums.push(i);
+        }
+        var options = jsPsych.randomization.shuffle(nums);
+        var labels = ["A","B","C","D","E","F"]
+        var set = window[labels[subsetnum]+"norm"];
+        var sset = window[labels[subsetnum]+"s"];
+        var srset = window[labels[subsetnum]+"sr"]
+        var grid = [
+       
+        [set[options[0]], set[options[1]], set[options[2]], set[options[3]], sset[options[4]]],
+        [sset[options[5]], 1, 1, set[options[6]], set[options[7]]],
+        [set[options[8]], set[options[9]], set[options[10]], 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]
+    ];
+        return shuffled(grid);
+    }
+
+    
+    var oneproc = {
+        type: "show-grid",
+        stimuli: getonegrid,
+        condition: "onetarget",
+        image_size: [150, 150],
+        response_ends_trial: true,
+        choices: "t"
+    }
+    
+    var fillerproc = {
+        type: "filler-grid",
+        stimuli: sfill,
+        condition: "filler",
+        image_size: [150, 150],
+        response_ends_trial: true,
+        choices: "t"
+    }
+    
+    var twoproc = {
+        type: "two-grid",
+        stimuli: stest,
+        condition: "common",
+        image_size: [150, 150],
+        response_ends_trial: true,
+        choices: "t"
+    }
+    
+     var privproc = {
+        type: "ego-grid",
+        stimuli: stest,
+        condition: "priv",
+        image_size: [150, 150],
+        response_ends_trial: true,
+        choices: "t"
+    }
+     
+     var partner = {
+        type: "partner-grid",
+        stimuli: spartner,
+        condition: "partner",
+        image_size: [150, 150],
+    }
+
+
+     
+// sample function that might be used to check if a subject has given
+// consent to participate.
+var check_consent = function(elem) {
+  if (document.getElementById('consent_checkbox1').checked && document.getElementById('consent_checkbox2').checked && document.getElementById('consent_checkbox3').checked ) {
+    return true;
+  }
+  else {
+    alert("If you wish to participate, you must check all three boxes next to the statements of consent.");
+    return false;
+  }
+  return false;
+};
+    
+    var consent = {
+  type:'external-html',
+  url: "consentform.html",
+  cont_btn: "start",
+  check_fn: check_consent
+};
+//    timeline.push(consent);
+    
+     var debrief = {
+  type:'external-html',
+  url: "debrief.html",
+  cont_btn: "Okay"
+};
+    
+//var startmic = function(){    
+//navigator.mediaDevices.getUserMedia({ audio: true })
+//  .then(stream => {
+//    mediaRecorder = new MediaRecorder(stream);
+//    mediaRecorder.start();
+//
+//    var audioChunks = [];
+//    mediaRecorder.ondataavailable = function(e) {
+//      audioChunks.push(e.data);
+//    };
+//
+//    mediaRecorder.onstop = function(e) {
+//        audioBlob = new Blob(audioChunks, {type:'audio/ogg'});
+//        blobUrl = URL.createObjectURL(audioBlob);
+//        saveAudio(audioBlob);
+////        saveAudio(ID, blobUrl);
+//        console.log(blobUrl);
+////        console.log(audioBlob.arrayBuffer());
+//    };
+//   
+//  });
+    
+var demographic = { // DEMOGRAPHICS FORM
+    type: 'survey-html-form',
+    preamblE: "Thank you for taking part in the experiment today. We would now like you to complete the following questionnaire.",
+    html: demo
+};
+
+var mictest = {
+    type: 'external-html',
+    url: "mictest.html",
+    cont_btn: "start"
+}    
+
+    var proc = { 
+//        timeline: jsPsych.randomization.shuffle([fillertimeline,twotimeline,privtimeline,fillertimeline,twotimeline,privtimeline,fillertimeline,twotimeline,privtimeline]),
+        timeline: oneproc,
+        randomize_order: true        
+    }
+//    timeline.push(proc);
+//    timeline.push(consent,demographic,debrief);
+    
+   
+    
+     function saveData(name, data){
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', "mturk-datasaver.php"); // 'write_data.php' is the path to the php file described above.
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.send(JSON.stringify({filename: name, filedata: data}));
+     }
+    
+    
+         
+    function saveAudio(blob){
+        fetch('/upload.php', {
+                   method: "POST",
+                   body: blob
+               })
+               .then(response => {
+                   if (response.ok) return response;
+                   else throw Error('Server returned ${response.status}: ${response.statusText}')
+               })
+               .then(response => console.log(response.text()))
+               .catch(err => {
+                   alert(err);
+               });        }
+    
+    var timeline = [oneproc];
+    
+    
+       jsPsych.init({
+        exclusions: {
+            min_width: 600,
+            min_height: 600,
+            audio: true},        
+        timeline: timeline, 
+        preload_images: stimuli,
+        preload_audio: audio,
+        on_finish: function() {
+            mediaRecorder.stop();
+            jsPsych.data.get().addToAll({subject_id:ID});
+            saveData(ID, jsPsych.data.get().csv()); 
+//            saveData(ID, audioBlob);
+//            console.log(blobUrl);
+            jsPsych.data.displayData();
+      
+        }
+    });
+    
+  
+
+</script>
+
+</html>

@@ -1,0 +1,72 @@
+<h1>Instructions</h1>
+
+<p>You will be asked to play a picture naming and matching game with a partner. Today, your partner will be <b>another participant</b>. You will be connected to your partner before you start playing the game. </p>
+
+<p>You and your partner will see matching grids of images. If you see an image with a red box around it, you should ask your partner to click on that object. If you do not see a red box around any image, your partner will ask you to click on an object. You will take turns, alternating between clicking or telling your partner which picture to click. </p> 
+
+<p> The aim of this game is to complete the naming and clicking tasks as quickly and accurately as possible.</p>
+
+ <p> When it is your turn to ask your partner what to click, <b>press and hold the T key to activate your microphone.</b> Turns will advance each time the clicking partner clicks on an object. </p> 
+
+<h1>Screen layout</h1>
+
+<p>In each turn you and your partner will be presented with a screen made up of a number of objects. <b>There will be some objects that only you can see.</b> These will have <b>grey backgrounds</b> for you and be blacked out for your partner.</p>
+
+
+<p><b>There are also some objects that only your partner can see.</b> These are <b>blacked out</b> for you and have grey backgrounds for your partner. </p>
+	
+<p>See the example below of what each partner might see on a given turn. 
+</p>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 50px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+	
+	.figcaption {
+  display: block;
+  width: 100%;
+  text-align: right;}
+/*
+    
+figure figcaption {
+    text-align: center;
+	margin-left: 50%;
+	margin-right: 50%;
+	padding: 0.5em;
+}
+*/
+	img {
+  display: block;
+  margin-left: 50%;
+  margin-right: 50%;
+}
+	
+</style>
+<div class="row">
+  <div class="column">
+    <img src="partnerA.png" alt="Partner A" style="width:100%" class="center">
+      <span class="figcaption">Partner A's screen</span>
+  </div>
+  <div class="column">
+    <img src="partnerB.png" alt="Partner B" style="width:100%" class="center">
+      <span class="figcaption">Partner B's screen</span>
+  </div>
+</div>
+
+<p>In this example, Partner A might say "click the fish" and the turn would end when Partner B clicked on the fish. Partner A can see the tree and the bird, while Partner B cannot. Partner B can see the window and the rainclouds, while Partner A cannot</p>
+
+<button type="button" id="continue" >Continue</button>

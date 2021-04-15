@@ -1,0 +1,144 @@
+<html>
+<head>
+    <script type="text/javascript" src="jspsych.js"></script>
+    <script type="text/javascript" src="jspsych-ego-grid.js"></script>
+    <script type="text/javascript" src="jspsych-external-html.js"></script>
+        <script type="text/javascript" src="jspsych-cpu-partner-grid.js"></script>
+
+    <script type="text/javascript" src="jspsych-partner-grid.js"></script>
+    <script type="text/javascript" src="jspsych-show-grid.js"></script>
+    <script type="text/javascript" src="jspsych-categorize-html.js"></script>
+    <script type="text/javascript" src="jspsych-two-grid.js"></script>
+    <script type="text/javascript" src="jspsych-filler-grid.js"></script>
+    <script type="text/javascript" src="jspsych-call-function.js"></script>
+    <script type="text/javascript" src="jspsych-vsl-grid-scene.js"></script>
+	<script type="text/javascript" src="jspsych-html-keyboard-response.js"></script>
+    <script type="text/javascript" src="jspsych-survey-html-form.js"></script>
+    <!--<script type="text/javascript" src="human-partner.js"></script>
+    <script type="text/javascript" src="computer-partner.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"
+    ></script>
+    <script type="text/javascript" src="alertcode.js"></script>
+    <link type="text/css" href="jspsych.css" rel="stylesheet" />
+    <link type="text/css" href="timer.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="#" />
+    </head>
+
+<body>
+    <H1>Microphone Testing</H1>
+    <p>To take part in this experiment you will require a working microphone. Please test your voice using the record button to make sure that your microphone works.</p>
+    <button onclick='record()' id='record'>Record</button>
+    <button onclick='stopTest()' id='stop' disabled>Stop</button>
+    <h2>Information Logs</h2>
+    <div id='logs'></div>
+    <h2>Recordings</h2>
+    <div id='recordings'></div>
+
+    <div>
+        <p>Please make sure to listen to a few recordings before you press continue. Make sure that you can clearly hear your voice at a regular volume.</p> <button onclick='randomizeCondition()' id='start' disabled>Continue</button>
+    </div>
+
+   <script>
+   
+   function include(filename,callback)
+    {
+       var head = document.getElementsByTagName('head')[0];
+
+       var script = document.createElement('script');
+       script.src = filename;
+       script.type = 'text/javascript';
+        // Then bind the event to the callback function.
+        // There are several events for cross browser compatibility.
+        script.onreadystatechange = callback;
+        script.onload = callback;
+
+       head.appendChild(script);
+    } 
+        function randomizeCondition(){
+            var callbackFunc = function(){
+                startExperiment();
+            }
+            var x = Math.round(Math.random());
+            console.log("x was " + x);
+            if(x < 0.5){ //Human partner
+                console.log("Human");
+                include("human-partner.js",callbackFunc);
+            }
+            else{ //Computer partner
+                console.log("Computer");
+                include("computer-partner.js",callbackFunc);
+            }
+        }
+        var mediaRecorderTest;
+        var audioChunks;
+        var curStream;
+
+        function record() {
+            $('#logs').prepend(
+                $('<p>', {
+                    text: 'Attempting to record audio.'
+                })
+            );
+
+            navigator.mediaDevices.getUserMedia({
+                    audio: true
+                })
+                .then(stream => {
+                    window.streamReference = stream;
+                    mediaRecorderTest = new MediaRecorder(stream);
+                    mediaRecorderTest.start();
+
+                    $('#logs').prepend(
+                        $('<p>', {
+                            text: 'Recording started.'
+                        })
+                    );
+
+                    audioChunks = [];
+                    $('#record')[0].disabled = true;
+                    $('#stop')[0].disabled = false;
+
+                    mediaRecorderTest.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    }
+
+                    mediaRecorderTest.onstop = event => {
+                        const audioBlob = new Blob(audioChunks);
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        const audio = new Audio(audioUrl);
+
+                        $(`<audio controls preload='auto'><source src=${audioUrl}></audio>`).appendTo('#recordings');
+                    }
+                }).catch(e => {
+                    $('#logs').prepend(
+                        $('<p>', {
+                            text: 'Could not connect to microphone. Make sure you have given permission. Refresh the page if necessary.'
+                        })
+                    );
+                    console.log(e);
+                });
+
+        }
+
+
+        function stopTest() {
+
+            if (mediaRecorderTest) {
+                mediaRecorderTest.stop();
+                $('#logs').prepend($('<p>', {
+                    text: 'Recording stopped.'
+                }));
+                $('#stop')[0].disabled = true;
+                $('#record')[0].disabled = false;
+                $('#start')[0].disabled = false;
+
+                window.streamReference.getAudioTracks()
+                    .forEach(function(track) {
+                        track.stop();
+                    });
+            }
+
+        }
+
+    </script>
+</body></html>

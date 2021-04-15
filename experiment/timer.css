@@ -1,0 +1,66 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  background: white;
+}
+.wrapper {
+  width: 200px;
+  height: 200px;
+  margin: 20px auto;
+  position: relative;
+}
+.left {
+  width: 100px;
+  height: 200px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: -webkit-linear-gradient(top, #eaeaea 0%,#7cbc0a 100%);
+  border-radius: 100px 0 0 100px;
+  z-index: 10;
+  opacity: 0;
+  animation: fill 7s steps(1, end);
+  animation-fill-mode: forwards;
+}
+.right {
+  width: 100px;
+  height: 200px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: -webkit-linear-gradient(top, #eaeaea 0%,#7cbc0a 100%);
+  border-radius: 0 100px 100px 0;
+  z-index: 10;
+  opacity: 1;
+  animation: mask 7s steps(1, end);
+  animation-fill-mode: forwards;
+}
+.rotate {
+  /*
+  The mask is slightly larger than the two halfs
+  to prevent a trailing outline
+  */
+  width: 101px;
+  height: 202px;
+  position: absolute; 
+  top: -1px;
+  right: -1px;
+  background: white;
+  z-index: 20;
+  transform-origin: 0 50%;
+  animation: rota 7s linear;
+  animation-fill-mode: forwards;
+}
+@keyframes rota {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes fill {
+  0%        { opacity: 0; }
+  50%, 100% { opacity: 1; }
+}
+@keyframes mask {
+  0%        { z-index: 10; }
+  50%, 100% { z-index: 30; }
+}
